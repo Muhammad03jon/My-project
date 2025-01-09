@@ -4,12 +4,13 @@ from catboost import CatBoostClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import plotly.express as px
+from sklearn.preprocessing import StandardScaler
 
 # Заголовок приложения
 st.title('Прогнозирование диабета с помощью CatBoost')
 
 # Загрузка данных
-file_path = r"https://raw.githubusercontent.com/Muhammad03jon/Muhammad-Olimov/refs/heads/master/diabetes%20(2).csv"
+file_path = r"https://raw.githubusercontent.com/Muhammad03jon/My-project/refs/heads/master/diabetes%20(2).csv"
 df = pd.read_csv(file_path)
 
 # Раздел для отображения данных
@@ -64,6 +65,11 @@ X = df.drop('Diabetes', axis=1)
 y = df['Diabetes']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+scaler = StandardScaler()
+
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
 # Создание модели CatBoost
 model = CatBoostClassifier(
     iterations=150,
@@ -75,25 +81,31 @@ model = CatBoostClassifier(
 )
 
 # Обучение модели
-model.fit(X_train, y_train)
+model.fit(X_train_scaled, y_train)
 
 # Оценка модели
-train_accuracy = accuracy_score(y_train, model.predict(X_train))
-test_accuracy = accuracy_score(y_test, model.predict(X_test))
+train_accuracy = accuracy_score(y_train, model.predict(X_train_scaled))
+test_accuracy = accuracy_score(y_test, model.predict(X_test_scaled))
 
 st.subheader("Точность модели")
 st.write(f"Точность на обучающей выборке: {train_accuracy:.2f}")
 st.write(f"Точность на тестовой выборке: {test_accuracy:.2f}")
 
 # Прогнозирование для пользовательских данных
-prediction = model.predict(input_data)
-prediction_proba = model.predict_proba(input_data)
+if st.button('Предсказать'):
+    # Стандартизация пользовательских данных
+    input_data_standardized = scaler.transform(input_data)
 
-# Отображение результатов
-st.subheader("Результаты предсказания")
-st.write(f"Вероятность отсутствия диабета: {prediction_proba[0][0]:.2f}")
-st.write(f"Вероятность наличия диабета: {prediction_proba[0][1]:.2f}")
-st.success(f"Предсказание: {'Диабет' if prediction[0] == 1 else 'Нет диабета'}")
+    # Прогнозирование с использованием стандартизированных данных
+    prediction = model.predict(input_data_standardized)
+    prediction_proba = model.predict_proba(input_data_standardized)
+
+    # Отображение результатов
+    st.subheader("Результаты предсказания")
+    st.write(f"Вероятность отсутствия диабета: {prediction_proba[0][0]:.2f}")
+    st.write(f"Вероятность наличия диабета: {prediction_proba[0][1]:.2f}")
+    st.success(f"Предсказание: {'Диабет' if prediction[0] == 1 else 'Нет диабета'}")
+
 
 # Визуализация данных
 st.subheader('Визуализация данных')
