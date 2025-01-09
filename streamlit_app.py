@@ -93,7 +93,7 @@ st.write(f"Точность на обучающей выборке: {train_accur
 st.write(f"Точность на тестовой выборке: {test_accuracy:.2f}")
 
 # --- Матрица ошибок ---
-cm = confusion_matrix(y_test, y_pred)
+cm = confusion_matrix(y_test, model.predict(X_test_scaled))
 fig_cm, ax_cm = plt.subplots()
 disp = ConfusionMatrixDisplay(confusion_matrix=cm)
 disp.plot(ax=ax_cm, cmap=plt.cm.Blues)
