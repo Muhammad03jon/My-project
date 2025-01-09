@@ -92,6 +92,8 @@ st.subheader("Точность модели")
 st.write(f"Точность на обучающей выборке: {train_accuracy:.2f}")
 st.write(f"Точность на тестовой выборке: {test_accuracy:.2f}")
 
+y_pred_proba = model.predict_proba(X_test)[:, 1]
+
 # --- ROC-AUC график ---
 fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
 roc_auc = auc(fpr, tpr)
