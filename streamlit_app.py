@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 from catboost import CatBoostClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, roc_curve, auc, confusion_matrix, ConfusionMatrixDisplay
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 
 # Заголовок приложения
 st.title('Прогнозирование диабета с помощью CatBoost')
@@ -90,6 +91,35 @@ test_accuracy = accuracy_score(y_test, model.predict(X_test_scaled))
 st.subheader("Точность модели")
 st.write(f"Точность на обучающей выборке: {train_accuracy:.2f}")
 st.write(f"Точность на тестовой выборке: {test_accuracy:.2f}")
+
+# --- ROC-AUC график ---
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
+roc_auc = auc(fpr, tpr)
+
+# Создаем график
+fig_roc, ax_roc = plt.subplots()
+ax_roc.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+ax_roc.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)
+ax_roc.set_xlim([0.0, 1.0])
+ax_roc.set_ylim([0.0, 1.05])
+ax_roc.set_xlabel('False Positive Rate')
+ax_roc.set_ylabel('True Positive Rate')
+ax_roc.set_title('Receiver Operating Characteristic (ROC)')
+ax_roc.legend(loc="lower right")
+
+# Отображение в Streamlit
+st.subheader("ROC-AUC график")
+st.pyplot(fig_roc)
+
+# --- Матрица ошибок ---
+cm = confusion_matrix(y_test, y_pred)
+fig_cm, ax_cm = plt.subplots()
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot(ax=ax_cm, cmap=plt.cm.Blues)
+
+# Отображение в Streamlit
+st.subheader("Матрица ошибок")
+st.pyplot(fig_cm)
 
 # Прогнозирование для пользовательских данных
 if st.button('Предсказать'):
