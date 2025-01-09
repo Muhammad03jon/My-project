@@ -94,7 +94,7 @@ st.write(f"Точность на тестовой выборке: {test_accuracy
 # Прогнозирование для пользовательских данных
 if st.button('Предсказать'):
     # Стандартизация пользовательских данных
-    input_data_standardized = scaler.transform(input_data)
+    input_data_standardized = scaler.transform(input_data.values)
 
     # Прогнозирование с использованием стандартизированных данных
     prediction = model.predict(input_data_standardized)
