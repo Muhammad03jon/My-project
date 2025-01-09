@@ -92,27 +92,6 @@ st.subheader("Точность модели")
 st.write(f"Точность на обучающей выборке: {train_accuracy:.2f}")
 st.write(f"Точность на тестовой выборке: {test_accuracy:.2f}")
 
-y_pred_proba = model.predict_proba(X_test)[:, 1]
-
-# --- ROC-AUC график ---
-fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
-roc_auc = auc(fpr, tpr)
-
-# Создаем график
-fig_roc, ax_roc = plt.subplots()
-ax_roc.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
-ax_roc.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)
-ax_roc.set_xlim([0.0, 1.0])
-ax_roc.set_ylim([0.0, 1.05])
-ax_roc.set_xlabel('False Positive Rate')
-ax_roc.set_ylabel('True Positive Rate')
-ax_roc.set_title('Receiver Operating Characteristic (ROC)')
-ax_roc.legend(loc="lower right")
-
-# Отображение в Streamlit
-st.subheader("ROC-AUC график")
-st.pyplot(fig_roc)
-
 # --- Матрица ошибок ---
 cm = confusion_matrix(y_test, y_pred)
 fig_cm, ax_cm = plt.subplots()
