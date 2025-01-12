@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from catboost import CatBoostClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, roc_curve, auc, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 st.title('Прогнозирование диабета с помощью CatBoost')
 
 # Загрузка данных
-file_path = r"https://raw.githubusercontent.com/Muhammad03jon/My-project/refs/heads/master/diabetes%20(2).csv"
+file_path = "https://raw.githubusercontent.com/Muhammad03jon/My-project/refs/heads/master/diabetes%20(2).csv"
 df = pd.read_csv(file_path)
 
 # Раздел для отображения данных
@@ -58,7 +58,7 @@ input_data = pd.DataFrame({
     'FFPG': [ffpg],
     'Smoking': [1 if smoking == 'Да' else 0],
     'Drinking': [1 if drinking == 'Да' else 0],
-    'FamilyHistory': [1 if family_history == 'Да' else 0]
+    'FamilyHistory': [1 if family_history == 'Да' else 0]  # Исправлено название столбца на 'FamilyHistory'
 })
 
 # Подготовка данных для обучения
@@ -105,7 +105,7 @@ st.pyplot(fig_cm)
 # Прогнозирование для пользовательских данных
 if st.button('Предсказать'):
     # Стандартизация пользовательских данных
-    input_data_standardized = scaler.transform(input_data.values)
+    input_data_standardized = scaler.transform(input_data)
 
     # Прогнозирование с использованием стандартизированных данных
     prediction = model.predict(input_data_standardized)
@@ -128,3 +128,4 @@ fig = px.scatter(
     title='Индекс массы тела (BMI) и возраст по наличию диабета'
 )
 st.plotly_chart(fig)
+
